@@ -23,6 +23,9 @@ export const GetAllMovies = async () => {
         throw error;
     }
 }
+
+
+
 export const get3RandomMovies = async () => {
     try {
         const randomNum = Math.floor(Math.random() * 100) + 1;
@@ -48,12 +51,58 @@ export const getMoviesByGenreInRange = async (genre: string, range: string) => {
         throw error;
     }
 }
+export const getShowsByGenreInRange = async (genre: string, range: string) => {
+    try {
+        const link = `https://feed.entertainment.tv.theplatform.eu/f/jGxigC/bb-all-pas?form=json&range=${range}&byTags=${genre}`
+        const response = await fetch(link);
+        const data = await response.json();
+        return data.entries;
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        throw error;
+    }
+
+}
 export const getSeriesByGenreInRange = async (genre: string, range: string) => {
     try {
         const link = `https://feed.entertainment.tv.theplatform.eu/f/jGxigC/bb-all-pas?form=json&range=${range}&byTags=${genre}&byProgramType=series`
         const response = await fetch(link);
         const data = await response.json();
         return data.entries;
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        throw error;
+    }
+}
+export const getMoviesInRange = async (range: string) => {
+    try {
+        const link = `https://feed.entertainment.tv.theplatform.eu/f/jGxigC/bb-all-pas?form=json&range=${range}&byProgramType=movie`
+        const response = await fetch(link);
+        const data = await response.json();
+        return data.entries;
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        throw error;
+    }
+}
+export const getSeriesInRange = async (range: string) => {
+    try {
+        const link = `https://feed.entertainment.tv.theplatform.eu/f/jGxigC/bb-all-pas?form=json&range=${range}&byProgramType=series`
+        const response = await fetch(link);
+        const data = await response.json();
+        return data.entries;
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        throw error;
+    }
+}
+
+export const getmovieById = async (id: string) => {
+    try {
+        const link = `https://feed.entertainment.tv.theplatform.eu/f/jGxigC/bb-all-pas/${id}?form=json`
+        const response = await fetch(link);
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error('Error fetching movies:', error);
         throw error;

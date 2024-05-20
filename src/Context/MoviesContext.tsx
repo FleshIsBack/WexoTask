@@ -30,7 +30,6 @@ const MovieProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 contentType: movie.plprogram$programType
             }));
             setMovies(filteredMovies);
-            console.log('Movies:', filteredMovies);
         });
     }, [])
 

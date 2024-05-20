@@ -17,10 +17,12 @@ const MovieCard: React.FC<Props> = ({ item, isMovies, NoImage }) => {
         setLoaded(true);
     };
 
+    const modifiedId = item?.id ? item.id.replace("http://data.entertainment.tv.theplatform.eu/entertainment/data/ProgramAvailability/", "") : undefined;
+
     return (
         <div className='col-12 '>
             <div className='mb-4 mx-3'>
-                <Link to={`/${isMovies ? 'movie' : 'series'}/${item?.id}`}>
+                <Link to={`/shows/${modifiedId}`}>
                     <div className='img-wrapper'>
                         {!loaded && <div className='loadingBox'></div>}
                         <img

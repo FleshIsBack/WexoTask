@@ -6,6 +6,7 @@ import MovieCard from '../../Components/MovieCard/MovieCard';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import './Homescreen.css';
+import { Link } from 'react-router-dom';
 
 type Props = {};
 
@@ -14,6 +15,7 @@ const Homescreen: React.FC<Props> = () => {
     const [isMovies, setIsMovies] = useState(true); // State to toggle between movies and series
     const [loadingGenres, setLoadingGenres] = useState<{ [key: string]: boolean }>({});
     const [range, setRange] = useState<{ [key: string]: string }>({}); // Adjusted initial range for each genre
+    const [initialLoading, setInitialLoading] = useState(true); // State for initial loading
     const [fadeOut, setFadeOut] = useState<{ [key: string]: boolean }>({});
 
     const responsive = {
@@ -61,23 +63,21 @@ const Homescreen: React.FC<Props> = () => {
             }
 
             setMoviesByGenre(dataByGenre);
+            setInitialLoading(false); // Set initial loading to false after fetching data
         };
 
         fetchData();
     }, [isMovies]);
 
     const fetchMoreData = async (genre: string) => {
-        // Trigger fade-out effect
         setFadeOut(prev => ({ ...prev, [genre]: true }));
 
-        // Wait for the fade-out transition to complete before fetching new data
         setTimeout(async () => {
-            setLoadingGenres(prev => ({ ...prev, [genre]: true })); // Set loading to true for the genre
+            setLoadingGenres(prev => ({ ...prev, [genre]: true }));
 
             const currentRange = range[genre];
             const [start, end] = currentRange.split('-').map(Number);
-            const newRange = `${end + 1}-${end + 5}`; // Adjust range increment here
-
+            const newRange = `${end + 1}-${end + 5}`; //
             const newMovies = isMovies
                 ? await getMoviesByGenreInRange(genre, newRange)
                 : await getSeriesByGenreInRange(genre, newRange);
@@ -88,14 +88,14 @@ const Homescreen: React.FC<Props> = () => {
             }));
 
             setRange(prevRange => ({ ...prevRange, [genre]: newRange }));
-            setLoadingGenres(prev => ({ ...prev, [genre]: false })); // Set loading to false for the genre
-            setFadeOut(prev => ({ ...prev, [genre]: false })); // Reset fade-out state
-        }, 500); // Match this delay with the CSS transition duration
+            setLoadingGenres(prev => ({ ...prev, [genre]: false }));
+            setFadeOut(prev => ({ ...prev, [genre]: false }));
+        }, 2000);
     };
 
     const handleSlideEnd = useCallback((currentSlide: number, genre: string) => {
         const totalItems = moviesByGenre[genre]?.length || 0;
-        const itemsPerSlide = responsive.desktop.items; // Adjust according to the responsive settings
+        const itemsPerSlide = responsive.desktop.items;
         const totalPages = Math.ceil(totalItems / itemsPerSlide);
 
         // Only fetch more data if the user has reached the last slide
@@ -124,6 +124,7 @@ const Homescreen: React.FC<Props> = () => {
                         onClick={() => {
                             setRange({}); // Reset range when switching
                             setIsMovies(true);
+                            setInitialLoading(true); // Set initial loading when switching
                         }}
                     >
                         Movies
@@ -133,6 +134,7 @@ const Homescreen: React.FC<Props> = () => {
                         onClick={() => {
                             setRange({}); // Reset range when switching
                             setIsMovies(false);
+                            setInitialLoading(true); // Set initial loading when switching
                         }}
                     >
                         Series
@@ -141,23 +143,41 @@ const Homescreen: React.FC<Props> = () => {
 
                 {genres.map((genre, key) => (
                     <div className='row' key={key}>
-                        <h2 className='col-12'>{genre}</h2>
-                        {moviesByGenre[genre] && moviesByGenre[genre].length > 0 ? (
+                        <Link to={`/genres/${genre.toLowerCase()}`} className='text-decoration-none'>
+                            <h2 className='col-12 ms-5 text-decoration-none text-light'>{genre}</h2>
+                        </Link>
+                        {initialLoading ? (
                             <Carousel
                                 responsive={responsive}
                                 infinite={false} // Set to false to avoid infinite looping issues
                                 swipeable={false}
                                 draggable={false}
-                                beforeChange={(previousSlide, { currentSlide }) => handleSlideEnd(currentSlide, genre)}
                                 className='col-12'
                             >
-                                {moviesByGenre[genre].map((item, index) => (
-                                    <MovieCard item={item} key={index} isMovies={isMovies} NoImage={NoImage} isMovie={false} />
+                                {Array.from({ length: 7 }).map((_, index) => (
+                                    <LoadingCard key={index} genre={genre} />
                                 ))}
-                                {loadingGenres[genre] && <LoadingCard genre={genre} />}
                             </Carousel>
                         ) : (
-                            <div className='col-12'>No data available</div> // Handle case where there are no movies
+                            <>
+                                {moviesByGenre[genre] && moviesByGenre[genre].length > 0 ? (
+                                    <Carousel
+                                        responsive={responsive}
+                                        infinite={false} // Set to false to avoid infinite looping issues
+                                        swipeable={false}
+                                        draggable={false}
+                                        beforeChange={(previousSlide, { currentSlide }) => handleSlideEnd(currentSlide, genre)}
+                                        className='col-12'
+                                    >
+                                        {moviesByGenre[genre].map((item, index) => (
+                                            <MovieCard item={item} key={index} isMovies={isMovies} NoImage={NoImage} isMovie={false} />
+                                        ))}
+                                        {loadingGenres[genre] && <LoadingCard genre={genre} />}
+                                    </Carousel>
+                                ) : (
+                                    <div className='col-12'>No data available</div> // Handle case where there are no movies
+                                )}
+                            </>
                         )}
                     </div>
                 ))}

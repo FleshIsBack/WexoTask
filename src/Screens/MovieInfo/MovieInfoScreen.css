@@ -1,0 +1,74 @@
+.movie-info-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.backdrop-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(50%);
+}
+
+.overlay {
+    position: relative;
+    z-index: 2;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.container {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.text-white {
+    color: white;
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 767.98px) {
+    .movie-info-container {
+        height: auto;
+    }
+
+    .backdrop {
+        position: relative;
+        height: auto;
+    }
+
+    .backdrop-image {
+        height: auto;
+        filter: none;
+        /* Remove the dark filter for smaller screens */
+    }
+
+    .overlay {
+        position: relative;
+        height: auto;
+        padding: 0;
+    }
+
+    .container {
+        background: none;
+        /* Remove background for smaller screens */
+        color: black;
+        /* Change text color for better readability */
+        padding: 10px;
+    }
+}
