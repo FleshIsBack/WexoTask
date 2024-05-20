@@ -1,7 +1,9 @@
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
+## How to Run
+Install Node.js version 14.0.0 or later. once the project has been lauched run npm install witch will download the needed
+packages/libraries. to start the project run npm start.
 ## Available Scripts
 
 In the project directory, you can run:
